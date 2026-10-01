@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán COD</title>
+</head>
+
+<body>
+
+<section layout:fragment="content">
+
+    <div class="container mt-4">
+
+        <h2 class="mb-4">Thanh toán đơn hàng (COD)</h2>
+
+        <div class="alert alert-danger"
+             th:if="${error}"
+             th:text="${error}">
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-7">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+
+                        <h5 class="card-title mb-3">Thông tin giao hàng</h5>
+
+                        <form th:action="@{/checkout/place-order}" method="post">
+
+                            <div class="mb-3">
+                                <label class="form-label">Họ và tên người nhận</label>
+                                <input type="text"
+                                       name="fullName"
+                                       class="form-control"
+                                       th:value="${user.fullName}"
+                                       required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại</label>
+                                <input type="text"
+                                       name="phone"
+                                       class="form-control"
+                                       required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Địa chỉ giao hàng</label>
+                                <textarea name="address"
+                                          class="form-control"
+                                          rows="3"
+                                          required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Phương thức thanh toán</label>
+                                <input type="text"
+                                       class="form-control"
+                                       value="Thanh toán khi nhận hàng (COD)"
+                                       disabled>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">
+                                Đặt hàng
+                            </button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+
+                        <h5 class="card-title mb-3">Đơn hàng của bạn</h5>
+
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item"
+                                th:each="item : ${cart.items}">
+                                <span th:text="${item.product.name}"></span>
+                                x
+                                <span th:text="${item.quantity}"></span>
+                                - Giá:
+                                <span th:text="${item.product.price}"></span>
+                            </li>
+                        </ul>
+
+                        <h5 class="text-end">
+                            Tổng cộng:
+                            <span th:text="${cart.totalPrice}"></span> đ
+                        </h5>
+
+                        <a href="/cart" class="btn btn-secondary w-100 mt-3">
+                            Quay lại giỏ hàng
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</body>
+</html>

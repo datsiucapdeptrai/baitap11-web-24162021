@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý danh mục</title>
+</head>
+
+<body>
+
+<section layout:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Quản lý danh mục</h2>
+
+        <button type="button"
+                class="btn btn-primary"
+                id="btnAddCategory">
+            + Thêm danh mục
+        </button>
+    </div>
+
+    <!-- Thông báo -->
+    <div id="messageBox"
+         class="alert d-none"
+         role="alert">
+    </div>
+
+    <!-- Tìm kiếm -->
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <div class="row g-2">
+
+                <div class="col-md-7">
+                    <input type="text"
+                           id="searchKeyword"
+                           class="form-control"
+                           placeholder="Nhập tên danh mục">
+                </div>
+
+                <div class="col-md-2">
+                    <select id="pageSize"
+                            class="form-select">
+                        <option value="5">5 danh mục</option>
+                        <option value="10">10 danh mục</option>
+                        <option value="20">20 danh mục</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <button type="button"
+                            class="btn btn-success"
+                            id="btnSearch">
+                        Tìm kiếm
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            id="btnReset">
+                        Làm mới
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bảng danh mục -->
+    <div class="card">
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-dark">
+                    <tr>
+                        <th style="width: 100px">ID</th>
+                        <th>Tên danh mục</th>
+                        <th style="width: 180px">Icon</th>
+                        <th style="width: 220px">Thao tác</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="categoryTableBody">
+                    <tr>
+                        <td colspan="4"
+                            class="text-center">
+                            Đang tải dữ liệu...
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- Thông tin phân trang -->
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div id="pageInformation"
+                     class="text-muted">
+                </div>
+
+                <nav>
+                    <ul class="pagination mb-0"
+                        id="categoryPagination">
+                    </ul>
+                </nav>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal thêm/cập nhật -->
+    <div class="modal fade"
+         id="categoryModal"
+         tabindex="-1"
+         aria-hidden="true">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <form id="categoryForm">
+
+                    <div class="modal-header">
+
+                        <h5 class="modal-title"
+                            id="categoryModalTitle">
+                            Thêm danh mục
+                        </h5>
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                        </button>
+
+                    </div>
+
+                    <div class="modal-body">
+
+                        <input type="hidden"
+                               id="categoryId">
+
+                        <div class="mb-3">
+
+                            <label for="categoryName"
+                                   class="form-label">
+                                Tên danh mục
+                            </label>
+
+                            <input type="text"
+                                   id="categoryName"
+                                   class="form-control"
+                                   maxlength="255"
+                                   required>
+
+                            <div class="invalid-feedback">
+                                Tên danh mục không được để trống.
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="categoryIcon"
+                                   class="form-label">
+                                Đường dẫn icon
+                            </label>
+
+                            <input type="text"
+                                   id="categoryIcon"
+                                   class="form-control"
+                                   maxlength="500"
+                                   placeholder="/uploads/categories/icon.png">
+
+                            <div class="form-text">
+                                Có thể nhập URL hoặc đường dẫn ảnh trong hệ thống.
+                            </div>
+
+                        </div>
+
+                        <div id="currentIconArea"
+                             class="mb-3 d-none">
+
+                            <label class="form-label">
+                                Xem trước icon
+                            </label>
+
+                            <div>
+                                <img id="currentIcon"
+                                     src=""
+                                     alt="Icon danh mục"
+                                     class="img-thumbnail"
+                                     style="width: 120px;
+                                            height: 120px;
+                                            object-fit: cover;">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Hủy
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-primary"
+                                id="btnSaveCategory">
+                            Lưu
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <!-- Hàm gọi GraphQL đã tạo trước đó -->
+    <script th:src="@{/js/graphql-client.js}"></script>
+
+    <!-- Xử lý trang Category -->
+    <script th:src="@{/js/category.js}"></script>
+
+</section>
+
+</body>
+</html>

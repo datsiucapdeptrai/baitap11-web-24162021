@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Không có quyền truy cập</title>
+</head>
+
+<body>
+
+<section layout:fragment="content">
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body p-5">
+
+                    <div class="display-1 fw-bold text-danger">
+                        403
+                    </div>
+
+                    <h2 class="mb-3">
+                        Không có quyền truy cập
+                    </h2>
+
+                    <p class="text-secondary mb-4">
+                        Tài khoản của bạn không được phép
+                        truy cập chức năng này.
+                    </p>
+
+                    <a class="btn btn-primary"
+                       th:href="@{/}">
+                        Quay về trang chủ
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+</body>
+</html>

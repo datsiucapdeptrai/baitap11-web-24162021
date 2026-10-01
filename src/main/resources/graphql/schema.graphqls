@@ -1,0 +1,113 @@
+type Query {
+    graphqlStatus: String!
+
+    productsByPriceAsc: [Product!]!
+
+    productsByCategory(
+        categoryId: ID!
+    ): [Product!]!
+
+    productById(
+        id: ID!
+    ): Product
+
+    productPage(
+        keyword: String = ""
+        categoryId: ID
+        page: Int = 0
+        size: Int = 5
+    ): ProductPage!
+
+    categories: [Category!]!
+
+    categoryById(
+        id: ID!
+    ): Category
+
+    categoryPage(
+        keyword: String = ""
+        page: Int = 0
+        size: Int = 5
+    ): CategoryPage!
+}
+
+type Mutation {
+    createProduct(
+        input: ProductInput!
+    ): Product!
+
+    updateProduct(
+        id: ID!
+        input: ProductInput!
+    ): Product!
+
+    deleteProduct(
+        id: ID!
+    ): Boolean!
+
+    createCategory(
+        input: CategoryInput!
+    ): Category!
+
+    updateCategory(
+        id: ID!
+        input: CategoryInput!
+    ): Category!
+
+    deleteCategory(
+        id: ID!
+    ): Boolean!
+}
+
+type Product {
+    id: ID!
+    name: String!
+    price: Float!
+    quantity: Int!
+    description: String
+    categoryId: ID
+    categoryName: String
+    images: [ProductImage!]!
+}
+
+
+type Category {
+    categoryId: ID!
+    categoryName: String!
+    icon: String
+}
+type ProductImage {
+    imageUrl: String!
+}
+type ProductPage {
+    content: [Product!]!
+    page: Int!
+    size: Int!
+    totalElements: Int!
+    totalPages: Int!
+    first: Boolean!
+    last: Boolean!
+}
+
+type CategoryPage {
+    content: [Category!]!
+    page: Int!
+    size: Int!
+    totalElements: Int!
+    totalPages: Int!
+    first: Boolean!
+    last: Boolean!
+}
+
+input ProductInput {
+    name: String!
+    price: Float!
+    quantity: Int!
+    description: String
+    categoryId: ID!
+}
+
+input CategoryInput {
+    categoryName: String!
+    icon: String
+}

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lịch sử đặt hàng</title>
+</head>
+
+<body>
+
+<section layout:fragment="content">
+
+    <div class="container mt-4">
+        <h2 class="mb-4">📦 Lịch sử đặt hàng</h2>
+
+        <!-- Bộ lọc trạng thái -->
+        <div class="mb-4">
+            <a th:href="@{/orders/history}"
+               class="btn btn-sm me-1 mb-1"
+               th:classappend="${currentStatus == null} ? 'btn-primary' : 'btn-outline-primary'">
+                Tất cả
+            </a>
+
+            <a th:each="s : ${allStatuses}"
+               th:href="@{/orders/history(status=${s})}"
+               class="btn btn-sm me-1 mb-1"
+               th:classappend="${currentStatus == s} ? 'btn-primary' : 'btn-outline-primary'"
+               th:switch="${s.name()}">
+                <span th:case="'NEW'">Đơn hàng mới</span>
+                <span th:case="'CONFIRMED'">Đã xác nhận</span>
+                <span th:case="'PREPARING'">Chuẩn bị hàng</span>
+                <span th:case="'SHIPPING'">Đang vận chuyển</span>
+                <span th:case="'DELIVERING'">Đang giao hàng</span>
+                <span th:case="'DELIVERED'">Đã giao</span>
+                <span th:case="'CANCELLED'">Đơn hàng hủy</span>
+                <span th:case="'RETURNED'">Đơn hàng hoàn</span>
+                <span th:case="*" th:text="${s.name()}"></span>
+            </a>
+        </div>
+
+        <!-- Thông báo khi không có đơn hàng -->
+        <div th:if="${orders.isEmpty()}"
+             class="alert alert-info">
+            Bạn chưa có đơn hàng nào.
+        </div>
+
+        <!-- Bảng đơn hàng -->
+        <div th:if="${!orders.isEmpty()}"
+             class="table-responsive">
+
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-dark">
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Ngày đặt</th>
+                    <th>Người nhận</th>
+                    <th>SĐT</th>
+                    <th>Địa chỉ</th>
+                    <th>Tổng tiền</th>
+                    <th>Thanh toán</th>
+                    <th>Trạng thái</th>
+                    <th>Chi tiết</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="order : ${orders}">
+                    <td>
+                        <strong th:text="'#' + ${order.id}"></strong>
+                    </td>
+
+                    <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
+
+                    <td th:text="${order.fullName}"></td>
+
+                    <td th:text="${order.phone}"></td>
+
+                    <td th:text="${order.address}"></td>
+
+                    <td class="text-danger fw-bold">
+                        <span th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')}"></span> đ
+                    </td>
+
+                    <td>
+                        <span class="badge bg-secondary"
+                              th:text="${order.paymentMethod}"></span>
+                    </td>
+
+                    <td>
+                        <span class="badge"
+                              th:switch="${order.status.name()}">
+                            <span th:case="'NEW'" class="badge bg-info">Đơn hàng mới</span>
+                            <span th:case="'CONFIRMED'" class="badge bg-primary">Đã xác nhận</span>
+                            <span th:case="'PREPARING'" class="badge bg-warning text-dark">Chuẩn bị hàng</span>
+                            <span th:case="'SHIPPING'" class="badge bg-primary">Đang vận chuyển</span>
+                            <span th:case="'DELIVERING'" class="badge bg-info">Đang giao hàng</span>
+                            <span th:case="'DELIVERED'" class="badge bg-success">Đã giao</span>
+                            <span th:case="'CANCELLED'" class="badge bg-danger">Đã hủy</span>
+                            <span th:case="'RETURNED'" class="badge bg-secondary">Đã hoàn</span>
+                        </span>
+                    </td>
+
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                th:attr="data-bs-target='#details-' + ${order.id}">
+                            Xem chi tiết
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Dòng chi tiết sản phẩm (ẩn/hiện) -->
+                <tr th:each="order : ${orders}"
+                    class="collapse"
+                    th:id="'details-' + ${order.id}">
+                    <td colspan="9" class="bg-light">
+                        <strong>Chi tiết sản phẩm:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li th:each="d : ${order.orderDetails}">
+                                <span th:text="${d.product.name}"></span>
+                                ×
+                                <span th:text="${d.quantity}"></span>
+                                =
+                                <span th:text="${#numbers.formatDecimal(d.price, 0, 'COMMA', 0, 'POINT')}"></span> đ
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <a href="/" class="btn btn-secondary mt-3">
+            ← Về trang chủ
+        </a>
+
+    </div>
+
+</section>
+
+</body>
+</html>
